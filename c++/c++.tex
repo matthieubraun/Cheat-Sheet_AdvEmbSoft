@@ -1,0 +1,226 @@
+\subsection*{C++}
+Initializes a vector \texttt{v} with four integers and uses a range-based
+for loop to print each element. The \texttt{auto} keyword automatically deduces
+the element type (\texttt{int} in this case).
+\begin{minted}{c++}
+std::vector<int> v = {7, 5, 16, 8};
+for (auto n : v) {
+    std::cout << n << " ";
+}
+\end{minted}
+
+Objects can be allocated on the stack or heap.\texttt{s1} and \texttt{s2} are stack-allocated
+strings, while \texttt{s3} is a heap-allocated string. \texttt{s4} is a deep copy of \texttt{s2},
+and \texttt{s5} is a shallow copy of \texttt{s3}. Changes to \texttt{s5} affect \texttt{s3}, as
+shown by changing the first character to '@'. Heap memory is deallocated with \texttt{delete}.
+\begin{minted}{c++}
+std::string s1; //empty string
+std::string s2("Hello"); //initialized string
+std::string* s3 = new std::string("World"); //heap string
+std::string s4 = s2; //deep copy
+std::string* s5 = s3; //shallow copy
+s5->at(0) = '@'; //s3 is also modified
+delete s3; s3 = nullptr; //heap deallocation
+delete s5; s5 = nullptr; 
+\end{minted}
+
+Declares two global variables. \texttt{globalVariable} can be accessed from any
+part of the program, while \texttt{restrictedGlobalVariable} is \texttt{static},
+limiting its scope to this file only.
+\begin{minted}{c++}
+int globalVariable = 9;
+static int restrictedGlobalVariable = 10;
+\end{minted}
+
+Declares global constants and class constants. \texttt{kGlobalConstantExpr} is a
+compile-time constant, while \texttt{kGlobalConstant} is a runtime constant. Inside
+\texttt{ClassWithConstant}, \texttt{kConstantExpr} is a compile-time constant, and
+\texttt{kConstant} is a runtime constant initialized with \texttt{kGlobalConstant * 2}.
+\begin{minted}{c++}
+static constexpr uint32_t kGlobalConstantExpr = 1;
+static const uint32_t kGlobalConstant = rand();
+class ClassWithConstant {
+public:
+    static constexpr uint32_t kConstantExpr = 2;
+    static const uint32_t kConstant;
+};
+const uint32_t ClassWithConstant::kConstant = kGlobalConstant * 2;
+\end{minted}
+
+Demonstrates the use of fixed and dynamic arrays. \texttt{myArray1} is a
+fixed-size array on the stack, while \texttt{myArray2} is a dynamically allocated array on
+the heap. \texttt{myArray} is a dynamic array whose size is determined at runtime. The
+\texttt{sizeof} operator is used to calculate the size of \texttt{myArray}.
+\begin{minted}{c++}
+static constexpr int arraySize = 30;
+int myArray1[arraySize] = {0}; //fixed array on stack
+int* myArray2 = new int[arraySize];  //dynamic array on heap
+delete[] myArray2; //realease heap memory
+myArray2 = nullptr; //reset pointer
+int varSize = 5;
+int myArray[varSize] = {0};
+myArray[0] = 1;
+myArray[1] = myArray[0];
+int size = sizeof(myArray) / sizeof(int);
+\end{minted}
+
+Demonstrates the use of a \texttt{std::vector}, a dynamic array. It initializes
+\texttt{v} with four integers, adds two more at the end, removes the last one, and accesses the
+first and last elements. It also gets the size of the vector.
+\begin{minted}{c++}
+std::vector<int> v = {7, 5, 16, 8};
+v.push_back(25); //add element to end
+v.push_back(13); //add another element to end
+v.pop_back(); //remove last element
+std::cout << "First element is : " << v.front() << std::endl;
+std::cout << "Last element is : " << v.back() << std::endl;
+int size = v.size();
+\end{minted}
+
+Two ways to create a 2D array. The first part uses raw pointers to create
+a jagged array, where each row has a different length. The second part uses \texttt{std::vector},
+a dynamic array from the C++ Standard Library, to achieve the same result in a safer and simpler way.
+\begin{minted}{c++}
+char** array = new char*[base]; //jagged array
+for (int i = 0; i < base; i++) {
+    array[i] = new char[base - i + 1];
+    for (int j = 0; j < base - i; j++){
+        array[i][j] = '*';
+    }
+    array[i][base - i] = '\0';
+}
+
+std::vector<std::vector<char>> array(base); //2D vector
+for (int i = 0; i < base; i++){
+    array[i] = std::vector<char>(base - i, '*');
+}
+\end{minted}
+
+Defines a \texttt{Point} class with two constructors, methods to move the point and
+access its coordinates, and an operator overload for addition. The `+` operator is overloaded to
+add the coordinates of two points.
+\begin{minted}{c++}
+class Point {
+    public:
+        Point() : _x(0), _y(0) { } // constructors
+        Point(float x, float y) : _x(x), _y(y) { }
+        ~Point() { // destructor
+            std::cout << "Point destructor called" << std::endl;
+        }
+        void move(float dx, float dy) { // public methods
+            _x += dx;
+            _y += dy;
+        }
+        float x() const { return _x; }
+        float y() const { return _y; }
+        Point operator+(const Point& other) const {
+            return Point(_x + other._x, _y + other._y);
+        }
+    private:
+        float _x; // private data fields
+        float _y;
+};
+\end{minted}
+
+Demonstrates the concept of polymorphism. It defines a \texttt{Base} class and a
+\texttt{Derived} class that inherits from \texttt{Base}. Both classes have a method \texttt{f()},
+but in \texttt{Derived}, \texttt{f()} is overridden. When \texttt{f()} is called on a \texttt{Base}
+reference or pointer that actually points to a \texttt{Derived} object, the \texttt{Derived}
+version of \texttt{f()} is called due to the \texttt{virtual} keyword.
+\begin{minted}{c++}
+class Base {
+public:
+    virtual void f() {
+        std::cout << "f() in Base class called" << std::endl;
+    }
+};
+class Derived : public Base {
+public:
+    void f() override {
+        std::cout << "f() in Derived class called" << std::endl;
+    }
+};
+int main() {
+    Base b; // Create a base instance
+    Derived d; // Create a derived instance
+    b.f(); // Prints base
+    d.f(); // Prints derived
+    Base& br = b; // The type of br is Base&
+    Base& dr = d; // The type of dr is Base& as well
+    br.f(); // Prints base
+    dr.f(); // Prints derived (because Base::f() is declared as virtual)
+    Base* bp = &b; // The type of bp is Base*
+    Base* dp = &d; // The type of dp is Base* as well
+    bp->f(); // Prints base
+    dp->f(); // Prints derived (because Base::f() is declared as virtual)
+    br.Base::f(); // prints base
+    dr.Base::f(); // prints base
+    return 0;
+}
+\end{minted}
+
+Defines a \texttt{Buffer} class that allocates a block of memory when it is
+constructed and releases that memory when it is destroyed. This is a common pattern for classes
+that manage resources, which is often referred to as Resource Acquisition Is Initialization (RAII).
+\begin{minted}{c++}
+class Buffer {
+public:
+    Buffer(size_t size) : _size(size), _data(new char[size]) { }
+    ~Buffer() { // destructor
+        delete[] _data; // release the allocated memory
+    }
+private:
+    size_t _size;
+    char* _data;
+};
+\end{minted}
+
+Demonstrates two ways of managing dynamic memory. The first part uses raw pointers to
+allocate and deallocate memory manually, which can lead to memory leaks if not handled properly.
+The second part uses \texttt{std::unique\_ptr}, a smart pointer that automatically deallocates the
+memory when it's no longer needed, preventing memory leaks.
+\begin{minted}{c++}
+void function()
+{
+    char* pArray = new char[100]; // solution with raw pointer
+    bool condition = false;
+    if (condition) {
+        // at this point, a memory leak arises since pArray is not released
+        return;
+    }
+    delete [] pArray;
+    pArray = nullptr;
+    // solution with unique_ptr
+    std::unique_ptr<char[]> array_ptr(new char[99]);
+    if (condition) {
+        // no memory leak since the destructor of array_ptr is called
+        return;
+    }
+}
+\end{minted}
+
+Class templates allow for creating classes that can work with different data types and sizes.
+The \texttt{Arithmetic<T>} class performs basic arithmetic operations on any type \texttt{T}. The
+\texttt{Queue<T, queue\_sz>} class represents a queue of any type \texttt{T} with a size
+\texttt{queue\_sz} known at compile time.
+\begin{minted}{c++}
+template <class T> class Arithmetic {
+public:
+    Arithmetic(T a, T b) : _a(a), _b(b) {}
+    T add() { return _a + _b; }
+    T sub() { return _a - _b; }
+private:
+    T _a, _b;
+};
+template <typename T, uint32_t queue_sz> class Queue {
+public:
+    uint32_t getSize() const { return queue_sz;}
+private:
+    T array[queue_sz];
+};
+int main() {
+    Arithmetic<float> a2(1.5, 2.1);
+    Queue<int, 10> intQueue;
+    return 0;
+}
+\end{minted}

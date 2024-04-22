@@ -1,0 +1,60 @@
+\subsection*{Priority inversion}
+Priority inversion occurs when a higher-priority task is waiting for a resource held by a
+lower-priority task. The main sources of priority inversion are non preemptable sections,
+sharing resources. synchronization and mutual exclusion. The solution is to use Resource
+Access Protocols\\
+\underline{Non-Preemptive Protocol (NPP)}\\
+A task is assigned the highest priority if it succeeds in locking a critical section.
+The task is assigned its own priority when it releases the critical section.\\
+Advantages:
+\begin{itemize}
+    \item Bounds(= limite) Priority Inversion and for a given task the bound is the maximal length
+          of any single critical section belonging to lower priority tasks.
+    \item It is deadlock free and limits the number of blocking of any task to one.
+\end{itemize}
+Disadvantages:
+\begin{itemize}
+    \item It allows low priority tasks to block high priority tasks.
+\end{itemize}
+\underline{Priority Inheritance Protocol (PIP)}\\
+The idea is to elevate the priority of a low priority task to the highest priority of tasks
+blocked by it. And resume its original priority when it exits the critical section.
+This prevents medium-priority tasks from preempting lower priority tasks and thus
+prolonging the blocking duration experienced by the higher-priority tasks.\\
+Advantages:
+\begin{itemize}
+    \item Blocking time is bounded.
+    \item Blocking time can be computed.
+\end{itemize}
+Disadvantages:
+\begin{itemize}
+    \item It is not deadlock free.
+    \item Chain blocking can occur.
+\end{itemize}
+\underline{Highest locker priority protocol (HLP)}\\
+Define the ceiling $C(S)$ of a critical section $S$ to be the highest priority
+of all tasks that use $S$ during execution. Note that $C(S)$ can be calculated
+statically (off-line). When it finishes with $S$, it sets its priority back to
+what it was before.
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\columnwidth}{
+            @{}
+            >{\hsize=0.95\hsize}X % 1st column, 5% smaller
+            >{\hsize=0.95\hsize}X % 2nd column, 5% smaller
+            >{\hsize=1.2\hsize}X  % 3rd column, 20% larger
+            >{\hsize=0.95\hsize}X % 4th column, 5% smaller
+            >{\hsize=0.95\hsize}X % 5th column, 5% smaller
+            >{\hsize=0.95\hsize}X % 6th column, 5% smaller
+            >{\hsize=0.95\hsize}X % 7th column, 5% smaller
+            @{}
+        } % 7 columns, third one is stretched more
+        \toprule
+        Algo- rithms & Chain blocking & Unnecessary blocking & Blocking instant & Deadlock prevention & Trans- parency & Imple- mentation \\
+        \midrule
+        NPP          & No             & Yes                  & arrival          & yes                 & Yes            & Easy             \\
+        PIP          & Yes            & limited              & access           & no                  & Yes            & medium           \\
+        HLP          & No             & Yes                  & arrival          & yes                 & No             & medium           \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
